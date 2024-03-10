@@ -6,21 +6,23 @@
  */
 
 import React from 'react';
-import {SafeAreaView, StatusBar, StyleSheet, Text} from 'react-native';
+import {SafeAreaView, StatusBar, StyleSheet} from 'react-native';
+import StockHolding from './screens/StockHolding';
+import {Colors} from './constants/colors';
 
 function App(): React.JSX.Element {
   return (
     <SafeAreaView style={styles.appContainer}>
       <StatusBar barStyle={'dark-content'} backgroundColor={'white'} />
-      <Text>Hello World</Text>
+      <StockHolding />
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   appContainer: {
+    backgroundColor: Colors.SecondayColor,
     flex: 1,
-    backgroundColor: 'white',
   },
 });
 
