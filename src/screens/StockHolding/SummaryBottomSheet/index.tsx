@@ -1,9 +1,12 @@
-import {Pressable, StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 import React, {useMemo, useState} from 'react';
-import {convertNumberToString, convertToInteger} from '../../../utils/helpers';
+import {convertToInteger} from '../../../utils/helpers';
 import {Stock} from '../../../types/types';
 import {Colors} from '../../../constants/colors';
 import {GlobalStrings} from '../../../constants/strings';
+import {Spacings} from '../../../constants/spacings';
+import SummaryCard from '../../../components/SummaryCard';
+import Button from '../../../components/Button';
 
 type SummaryBottomSheetProps = {
   data: Stock[];
@@ -15,10 +18,12 @@ type Accumulator = {
   todaysPL: number;
 };
 
-const SummaryBottomSheet = ({data}: SummaryBottomSheetProps) => {
+const SummaryBottomSheet = ({
+  data,
+}: SummaryBottomSheetProps): React.JSX.Element => {
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
 
-  const result = useMemo(
+  const result: Accumulator = useMemo(
     () =>
       data.reduce(
         (acc: Accumulator, stock: Stock) => {
@@ -38,7 +43,7 @@ const SummaryBottomSheet = ({data}: SummaryBottomSheetProps) => {
   );
   return (
     <View style={styles.summaryBottomSheet}>
-      <Pressable
+      <Button
         onPress={() => setIsExpanded(prev => !prev)}
         style={styles.button}
         hitSlop={styles.hitSlop}>
@@ -48,41 +53,28 @@ const SummaryBottomSheet = ({data}: SummaryBottomSheetProps) => {
             {transform: [{rotate: isExpanded ? '180deg' : '0deg'}]},
           ]}
         />
-      </Pressable>
+      </Button>
       {isExpanded ? (
         <>
-          <View style={styles.card}>
-            <Text>{GlobalStrings.SummaryCard.CurrentValue}</Text>
-            <Text>
-              {GlobalStrings.IndianCurrency}{' '}
-              {convertNumberToString(result.currentval / 100)}
-            </Text>
-          </View>
-          <View style={styles.card}>
-            <Text>{GlobalStrings.SummaryCard.TotalInvestment}</Text>
-            <Text>
-              {GlobalStrings.IndianCurrency}{' '}
-              {convertNumberToString(result.totalval / 100)}
-            </Text>
-          </View>
-          <View style={[styles.card, styles.marginBottom]}>
-            <Text>{GlobalStrings.SummaryCard.ProfitAndLoss}</Text>
-            <Text>
-              {GlobalStrings.IndianCurrency}{' '}
-              {convertNumberToString(
-                (result.currentval - result.totalval) / 100,
-              )}
-            </Text>
-          </View>
+          <SummaryCard
+            text={GlobalStrings.SummaryCard.CurrentValue}
+            value={result.currentval}
+          />
+          <SummaryCard
+            text={GlobalStrings.SummaryCard.TotalInvestment}
+            value={result.totalval}
+          />
+          <SummaryCard
+            text={GlobalStrings.SummaryCard.TodayProfitAndLoss}
+            value={result.todaysPL}
+            marginBottom
+          />
         </>
       ) : null}
-      <View style={styles.card}>
-        <Text>{GlobalStrings.SummaryCard.ProfitAndLoss}</Text>
-        <Text>
-          {GlobalStrings.IndianCurrency}{' '}
-          {convertNumberToString((result.currentval - result.totalval) / 100)}
-        </Text>
-      </View>
+      <SummaryCard
+        text={GlobalStrings.SummaryCard.ProfitAndLoss}
+        value={result.currentval - result.totalval}
+      />
     </View>
   );
 };
@@ -92,21 +84,20 @@ export default SummaryBottomSheet;
 const styles = StyleSheet.create({
   summaryBottomSheet: {
     backgroundColor: Colors.SecondayColor,
-    paddingBottom: 36,
-    paddingHorizontal: 20,
+    paddingBottom: Spacings.ThirtySix,
+    paddingHorizontal: Spacings.Twenty,
   },
   hitSlop: {
-    bottom: 24,
-    right: 16,
-    left: 16,
+    bottom: Spacings.TwentyFour,
+    right: Spacings.Sixteen,
+    left: Spacings.Sixteen,
   },
   button: {
     alignSelf: 'center',
-    marginBottom: 12,
-    marginTop: 4,
+    marginBottom: Spacings.Twelve,
+    marginTop: Spacings.Four,
   },
   triangle: {
-    backgroundColor: 'transparent',
     borderStyle: 'solid',
     borderLeftWidth: 8,
     borderRightWidth: 8,
@@ -114,13 +105,5 @@ const styles = StyleSheet.create({
     borderLeftColor: 'transparent',
     borderRightColor: 'transparent',
     borderBottomColor: Colors.PrimaryColor,
-  },
-  card: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 12,
-  },
-  marginBottom: {
-    marginBottom: 36,
   },
 });

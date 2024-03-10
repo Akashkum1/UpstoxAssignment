@@ -1,66 +1,35 @@
-import {FlatList, StyleSheet, Text, View} from 'react-native';
+import {FlatList, StyleSheet, View} from 'react-native';
 import React from 'react';
 import {GlobalStrings} from '../../../constants/strings';
 import {Stock} from '../../../types/types';
-import {convertNumberToString, convertToInteger} from '../../../utils/helpers';
 import {Colors} from '../../../constants/colors';
+import StockCard from '../../../components/StockCard';
+import {Spacings} from '../../../constants/spacings';
+import Typography from '../../../components/Typography';
 
 type StockListProps = {
   data: Stock[];
 };
 
-const StockList = ({data}: StockListProps) => {
-  const renderStock = ({item}: {item: Stock; index: number}) => {
-    /* convert floating number to integer as arithmetics operations on
-    floating value is not precise, the function converts ₹ 530.5 to  53050 */
-    // P&L = ltp*qty - avgPrice*qty
-    const profitAndLossInInteger =
-      convertToInteger(item.ltp) * item.quantity -
-      convertToInteger(item.avgPrice) * item.quantity;
-    /* converting the integer back to floating number and then to
-    string becuase zeros in decimal places gets truncated  */
-    const profitAndLoss = convertNumberToString(profitAndLossInInteger / 100);
+const StockList = ({data}: StockListProps): React.JSX.Element => {
+  const renderStock = ({item}: {item: Stock; index: number}) => (
+    <StockCard item={item} />
+  );
 
-    const ltp = convertNumberToString(item.ltp);
-
-    return (
-      <View style={styles.stockCard}>
-        <View style={styles.stockCardInfoContainer}>
-          <Text>{item.symbol}</Text>
-          <Text>
-            {GlobalStrings.StockCard.LTP}{' '}
-            <Text>
-              {GlobalStrings.IndianCurrency} {ltp}
-            </Text>
-          </Text>
-        </View>
-        <View style={styles.stockCardInfoContainer}>
-          <Text>{item.quantity}</Text>
-          <Text>
-            {GlobalStrings.StockCard.ProfitAndLoss}{' '}
-            <Text>
-              {GlobalStrings.IndianCurrency} {profitAndLoss}
-            </Text>
-          </Text>
-        </View>
-      </View>
-    );
-  };
-
-  const itemSeparator = () => {
+  const itemSeparator = (): React.JSX.Element => {
     return <View style={styles.itemSeparator} />;
   };
 
-  const emptyListComponent = () => {
+  const emptyListComponent = (): React.JSX.Element => {
     return (
       <View style={styles.emptyList}>
-        <Text style={styles.emptyListText}>
+        <Typography size="medium" weight="bold">
           {GlobalStrings.StockCard.EmptyStockListText}
-        </Text>
+        </Typography>
       </View>
     );
   };
-  console.log(data);
+
   return (
     <View style={styles.stockListContainer}>
       <FlatList
@@ -86,25 +55,13 @@ const styles = StyleSheet.create({
     borderBottomColor: Colors.BackgroundColor,
   },
   flatlistConatiner: {
-    paddingHorizontal: 20,
+    paddingHorizontal: Spacings.Twenty,
     backgroundColor: Colors.SecondayColor,
   },
   itemSeparator: {
     borderWidth: StyleSheet.hairlineWidth,
   },
   emptyList: {
-    paddingVertical: 32,
-  },
-  emptyListText: {
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  stockCard: {
-    gap: 12,
-    paddingVertical: 12,
-  },
-  stockCardInfoContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    paddingVertical: Spacings.ThirtyTwo,
   },
 });
